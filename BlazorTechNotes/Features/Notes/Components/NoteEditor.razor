@@ -1,0 +1,71 @@
+﻿@page "/note/{NoteId:int?}"
+
+@attribute [Authorize(Roles = "Admin,Writer")]
+
+@if (IsEditMode)
+{
+  <PageTitle>Edit Note</PageTitle>
+  <h3>Edit Note: @Note?.Title</h3>
+}
+else
+{
+  <PageTitle>Create Note</PageTitle>
+  <h3>Create Note</h3>
+}
+
+<a href="/notes" class="btn btn-primary mb-3">Back to Notes</a>
+
+@if (Note is not null)
+{
+
+  <EditForm Model="Note" OnValidSubmit="HandleValidSubmit" FormName="NoteEditorForm">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+      <label class="form-label">Título</label>
+      <InputText @bind-Value="Note.Title" class="form-control" />
+      <ValidationMessage For="() => Note.Title" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Contenido</label>
+      <InputTextArea @bind-Value="Note.Content" class="form-control" rows="6" />
+      <ValidationMessage For="() => Note.Content" />
+    </div>
+
+    <div class="form-check mb-3">
+      <InputCheckbox @bind-Value="Note.IsPublished" class="form-check-input" id="isPublished" />
+      <label class="form-check-label" for="isPublished">Publicado</label>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Fecha de publicación</label>
+      <InputDate @bind-Value="Note.PublishedAt" class="form-control" />
+      <ValidationMessage For="() => Note.PublishedAt" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Autor</label>
+      <InputText @bind-Value="Note.UserName" class="form-control" ReadOnly/>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary" type="submit" disabled="@isSubmitting">Guardar</button>
+      <button class="btn btn-secondary" type="button" @onclick="Reset">Cancelar</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+      <div class="alert alert-info mt-3">@message</div>
+    }
+  </EditForm>
+
+  @if (IsEditMode)
+  {
+    <form class="mt-3" @onsubmit="DeleteNoteAsync" @formname="DeleteNoteForm" method="post">
+      <button class="btn btn-danger mt-2" type="submit" disabled="@isSubmitting">Delete Note</button>
+      <AntiforgeryToken />
+    </form>
+  }
+
+}

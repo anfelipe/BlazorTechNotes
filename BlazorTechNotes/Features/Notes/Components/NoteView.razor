@@ -1,0 +1,35 @@
+﻿@page "/note/detail/{NoteId:int}"
+
+<div class="container py-5">
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <h2 class="h2 text-danger">Error</h2>
+        <p class="text-danger">@errorMessage</p>
+    }
+    else if (note is not null)
+    {
+        <div class="mb-4">
+            <h1 class="text-center display-4 text-primary">@note?.Title</h1>
+            <p class="text-center text-muted">
+                Escrito por: @note?.UserName
+            </p>
+            <p class="small text-muted">@note?.PublishedAt</p>
+        </div>
+        <div class="mb-4">
+            <p class="text-body">@note?.Content</p>
+        </div>
+        <div class="text-center">
+            <a href="/notes"
+                class="btn btn-primary">
+                <svg class="me-2" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Volver a notas
+            </a>
+        </div>
+    }
+    else
+    {
+        <p class="text-center text-muted">Cargando detalles de la nota...</p>
+    }
+</div>

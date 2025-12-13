@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BlazorTechNotes.Application/BlazorTechNotes.Application.csproj" />
+  <Project Path="BlazorTechNotes.Domain/BlazorTechNotes.Domain.csproj" />
+  <Project Path="BlazorTechNotes.Infrastructure/BlazorTechNotes.Infrastructure.csproj" />
+  <Project Path="BlazorTechNotes/BlazorTechNotes.csproj" />
+</Solution>
