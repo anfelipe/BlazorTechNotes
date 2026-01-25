@@ -1,10 +1,11 @@
 
 using BlazorTechNotes.Application.Authentication;
-using BlazorTechNotes.Application.Middleware;
+using BlazorTechNotes.Infrastructure.Middleware;
 using BlazorTechNotes.Domain.Notes;
 using BlazorTechNotes.Domain.User;
 using BlazorTechNotes.Infrastructure.Authentication;
 using BlazorTechNotes.Infrastructure.Repositories;
+using BlazorTechNotes.Infrastructure.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
@@ -12,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using BlazorTechNotes.Application.Users;
 
 namespace BlazorTechNotes.Infrastructure;
 
@@ -28,8 +29,11 @@ public static class DependencyInjection
 
     services.AddScoped<INoteRepository, NoteRepository>();
     services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IUserService, UserService>();
 
     AddAuthentication(services);
+
+    services.AddHttpContextAccessor();
 
     return services;
   }

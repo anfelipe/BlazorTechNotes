@@ -8,5 +8,7 @@ public record struct NoteResponse
   DateTime PublishedAt,
   DateTime CreatedAt,
   bool IsPublished,
-  string? UserName
+  string? UserName,
+  string UserId,
+  bool CanEdit
 );

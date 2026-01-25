@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using BlazorTechNotes.Infrastructure.Authentication;
+using BlazorTechNotes.Infrastructure.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +51,7 @@ public class AccountController(SignInManager<User> signInManager, UserManager<Us
     { UserName = email, Email = email, EmailConfirmed = true };
 
     await _userManager.CreateAsync(user);
+    await _userManager.AddToRoleAsync(user, "Reader");
     await _userManager.AddLoginAsync(user, info);
     await _signInManager.SignInAsync(user, isPersistent: false);
 

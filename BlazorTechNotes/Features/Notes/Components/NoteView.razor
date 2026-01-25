@@ -18,9 +18,14 @@
         <div class="mb-4">
             <p class="text-body">@note?.Content</p>
         </div>
+        @if (note?.CanEdit == true)
+        {
+            <td>
+                <a href="/note/@note.Value.Id" class="btn btn-primary btn-sm">Edit</a>
+            </td>
+        }
         <div class="text-center">
-            <a href="/notes"
-                class="btn btn-primary">
+            <a href="/notes"      class="btn btn-primary">
                 <svg class="me-2" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>

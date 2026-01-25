@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Http;
 
-namespace BlazorTechNotes.Application.Middleware;
+namespace BlazorTechNotes.Infrastructure.Middleware;
 
 public class BlazorAuthorizationMiddlewareResutlHandler : IAuthorizationMiddlewareResultHandler
 {

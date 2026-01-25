@@ -1,4 +1,4 @@
-using BlazorTechNotes.Infrastructure.Authentication;
+using BlazorTechNotes.Infrastructure.Users;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 

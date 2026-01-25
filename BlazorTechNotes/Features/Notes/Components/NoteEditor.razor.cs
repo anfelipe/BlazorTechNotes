@@ -1,5 +1,5 @@
 using BlazorTechNotes.Application.Notes;
-using BlazorTechNotes.Infrastructure.Authentication;
+using BlazorTechNotes.Infrastructure.Users;
 using Mapster;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;

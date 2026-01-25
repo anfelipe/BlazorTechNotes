@@ -1,5 +1,5 @@
 using BlazorTechNotes.Domain.Notes;
-using BlazorTechNotes.Infrastructure.Authentication;
+using BlazorTechNotes.Infrastructure.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,4 +1,3 @@
-using System;
 using BlazorTechNotes.Application.Authentication;
 
 namespace BlazorTechNotes.Application.Users.RegisterUser;

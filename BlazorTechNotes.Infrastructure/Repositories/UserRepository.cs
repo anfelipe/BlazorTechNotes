@@ -1,5 +1,5 @@
 using BlazorTechNotes.Domain.User;
-using BlazorTechNotes.Infrastructure.Authentication;
+using BlazorTechNotes.Infrastructure.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace BlazorTechNotes.Infrastructure.Repositories;
