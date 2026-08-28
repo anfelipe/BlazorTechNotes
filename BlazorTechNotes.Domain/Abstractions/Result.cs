@@ -1,34 +1,28 @@
 namespace BlazorTechNotes.Domain.Abstractions;
 
-public class Result(bool isSuccessfull, string? ErrorMessage = null)
+public class Result<T>
 {
-  public bool IsSuccessfull { get; } = isSuccessfull;
-  public bool HasFailed => !IsSuccessfull;
-  public string? ErrorMessage { get; } = ErrorMessage;
+  public bool IsSuccess { get; }
+  public T? Value { get; }
+  public ResultError Error { get; }
+  public bool IsFailure => !IsSuccess;
 
-  public static Result Ok() => new(true);
-  public static Result Fail(string errorMessage) => new(false, errorMessage);
-
-  public static Result<T> Ok<T>(T? value) => new(value, true, string.Empty);
-  public static Result<T> Fail<T>(string errorMessage) => new(default, false, errorMessage);
-
-  public static Result<T> FromValue<T>(T? value, string? errorMessage = null)
+  internal Result(bool isSuccess, T? value, ResultError error)
   {
-    if (value is null)
-    {
-      return Fail<T>(errorMessage ?? "Value cannot be null.");
-    }
 
-    return Ok(value);
+    if (isSuccess && error != ResultError.None)
+      throw new InvalidOperationException();
+
+    IsSuccess = isSuccess;
+    Value = value;
+    Error = error;
   }
-  
 }
 
-public class Result<T>(T? value, bool isSuccessfull, string? errorMessage = null) : Result(isSuccessfull, errorMessage)
+public static class Result
 {
-  public T? Value { get; } = value;
-
-  public static implicit operator Result<T>(T? value) => FromValue(value);
-
-  public static implicit operator T?(Result<T> result) => result.Value;
+  public static Result<T> Success<T>() => new(true, default!, ResultError.None);
+  public static Result<T> Success<T>(T value) => new(true, value, ResultError.None);
+  public static Result<T> Failure<T>(ResultError error) => new(false, default, error);
+  public static Result<T> Failure<T>(ResultError error, T value) => new(false, value, error);
 }

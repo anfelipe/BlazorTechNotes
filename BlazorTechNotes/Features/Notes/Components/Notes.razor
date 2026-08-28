@@ -1,4 +1,6 @@
 ﻿@page "/notes"
+@using BlazorTechNotes.Application.Features.Notes.Abstractions
+@using BlazorTechNotes.Application.Features.Notes.Responses
 
 @attribute [StreamRendering]
 
@@ -66,7 +68,7 @@ else
 
       if (result is not null)
       {
-        notes = result.IsSuccessfull ? result : [];
+        notes = result.IsSuccess ? result.Value : [];
       }
     }
     catch (Exception)

@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using BlazorTechNotes.Infrastructure.Users;
+using BlazorTechNotes.Infrastructure.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +55,8 @@ public class AccountController(SignInManager<User> signInManager, UserManager<Us
     await _userManager.AddLoginAsync(user, info);
     await _signInManager.SignInAsync(user, isPersistent: false);
 
+    _userManager.Dispose();
+
     return Redirect("/notes");
   }
 
@@ -66,7 +68,7 @@ public class AccountController(SignInManager<User> signInManager, UserManager<Us
     return Redirect("/notes");
   }
 
-  private IActionResult RedirectWithError(string errorMessage)
+  private RedirectResult RedirectWithError(string errorMessage)
   {
     var encodedMessage = Uri.EscapeDataString(errorMessage);
     return Redirect($"/register?error={encodedMessage}");

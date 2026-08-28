@@ -1,6 +1,5 @@
 using BlazorTechNotes.Application.Authentication;
-using BlazorTechNotes.Infrastructure.Users;
-using Microsoft.AspNetCore.Identity;
+using BlazorTechNotes.Infrastructure.Common;
 
 namespace BlazorTechNotes.Infrastructure.Authentication;
 
@@ -15,13 +14,13 @@ public class AuthenticationService(SignInManager<User> signInManager, UserManage
     return result.Succeeded;
   }
 
-  public async Task<RegisterUserResponse> RegisterUserAsync(string UserName, string email, string password)
+  public async Task<RegisterUserResponse> RegisterUserAsync(string userName, string email, string password)
   {
     var response = new RegisterUserResponse();
 
     var user = new User
     {
-      UserName = UserName,
+      UserName = userName,
       Email = email,
       EmailConfirmed = true
     };

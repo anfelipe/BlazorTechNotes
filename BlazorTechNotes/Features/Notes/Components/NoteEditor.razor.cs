@@ -1,5 +1,6 @@
-using BlazorTechNotes.Application.Notes;
-using BlazorTechNotes.Infrastructure.Users;
+using BlazorTechNotes.Application.Features.Notes.Abstractions;
+using BlazorTechNotes.Application.Features.Notes.Requests;
+using BlazorTechNotes.Infrastructure.Common;
 using Mapster;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
@@ -27,8 +28,8 @@ public partial class NoteEditor
   [CascadingParameter]
   private HttpContext HttpContext { get; set; } = default!;
 
-  private bool isSubmitting;
-  private string? message;
+  private bool _isSubmitting;
+  private string? _message;
   private bool IsEditMode => NoteId.HasValue;
 
   protected override async Task OnParametersSetAsync()
@@ -39,7 +40,7 @@ public partial class NoteEditor
       return;
     }
 
-    var note = await NoteService.GetNoteByIdAsync(NoteId ?? 0);
+    var note = await NoteService.GetNoteByIdAsync(NoteId.Value);
 
     if (IsEditMode)
     {
@@ -47,88 +48,75 @@ public partial class NoteEditor
     }
     else
     {
-      message = note.ErrorMessage;
+      _message = note.Error.Description;
     }
   }
 
   private async Task HandleValidSubmit()
   {
-    isSubmitting = true;
-    message = null;
+    _isSubmitting = true;
+    _message = null;
 
-    try
+    if (IsEditMode)
     {
-      if (IsEditMode)
+      var request = Note.Adapt<UpdateNoteRequest>();
+      request.Id = NoteId ?? 0;
+      var updated = await NoteService.UpdateNoteAsync(request);
+
+      if (!updated.IsSuccess)
       {
-        var request = Note.Adapt<UpdateNoteRequest>();
-        request.Id = NoteId ?? 0;
-        var updated = await NoteService.UpdateNoteAsync(request);
+        _message = updated.Error.Description;
+        _isSubmitting = false;
 
-        if (!updated.IsSuccessfull)
-        {
-          message = updated.ErrorMessage;
-          return;
-        }
-        
-        Note = updated.Value.Adapt<NoteModel>();
-        NavigationManager.NavigateTo("/notes");
+        return;
       }
-      else
+      
+      Note = updated.Value.Adapt<NoteModel>();
+      NavigationManager.NavigateTo("/notes");
+    }
+    else
+    {
+      var request = Note.Adapt<CreateNoteRequest>();
+      request.UserId = UserManager.GetUserId(HttpContext.User);
+      
+      var created = await NoteService.CreateNoteAsync(request);
+
+      if (!created.IsSuccess)
       {
-        var request = Note.Adapt<CreateNoteRequest>();
-        request.UserId = UserManager.GetUserId(HttpContext.User);
-        
-        var created = await NoteService.CreateNoteAsync(request);
-
-        if (!created.IsSuccessfull)
-        {
-          message = created.ErrorMessage;
-          return;
-        }
-
-        Note = created.Value.Adapt<NoteModel>();
-        message = "Nota guardada correctamente.";
+        _message = created.Error.Description;
+        _isSubmitting = false;
+        return;
       }
+
+      Note = created.Value.Adapt<NoteModel>();
+      _message = "Nota guardada correctamente.";
     }
-    catch (Exception ex)
-    {
-      message = $"Error al guardar: {ex.Message} - {ex.StackTrace}";
-    }
-    finally
-    {
-      isSubmitting = false;
-    }
+
+    _isSubmitting = false;
   }
 
   private async Task DeleteNoteAsync()
   {
-    isSubmitting = true;
-    message = null;
+    _isSubmitting = true;
+    _message = null;
 
-    try
+    if (IsEditMode)
     {
-      if (IsEditMode)
+      var deleted = await NoteService.DeleteNoteAsync(NoteId ?? 0);
+
+      if (!deleted.IsSuccess)
       {
-        var deleted = await NoteService.DeleteNoteAsync(NoteId ?? 0);
+        _message = deleted.Error.Description;
 
-        if (!deleted.IsSuccessfull)
-        {
-          message = deleted.ErrorMessage;
-          return;
-        }
-
-        message = "Nota eliminada correctamente.";
-        NavigationManager.NavigateTo("/notes");
+        _isSubmitting = false;
+        return;
       }
+
+      _message = "Nota eliminada correctamente.";
+      NavigationManager.NavigateTo("/notes");
     }
-    catch (Exception ex)
-    {
-      message = $"Error al eliminar: {ex.Message} - {ex.StackTrace}";
-    }
-    finally
-    {
-      isSubmitting = false;
-    }
+
+    _isSubmitting = false;    
   }
   
   private void Reset()

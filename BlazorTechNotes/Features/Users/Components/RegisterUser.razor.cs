@@ -1,4 +1,5 @@
-using BlazorTechNotes.Application.Users.RegisterUser;
+using BlazorTechNotes.Application.Features.Users.Abstractions;
+using BlazorTechNotes.Application.Features.Users.Requests;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorTechNotes.Features.Users.Components;
@@ -6,15 +7,15 @@ namespace BlazorTechNotes.Features.Users.Components;
 public partial class RegisterUser
 {
   [Inject]
-  internal NavigationManager NavigationManager { get; set; } = default!;
+  public NavigationManager NavigationManager { get; set; } = default!;
 
   [Inject]
-  internal IRegisterUserService RegisterUserService { get; set; } = default!;
+  public IRegisterUserService RegisterUserService { get; set; } = default!;
 
   [SupplyParameterFromForm]
   public required RegisterUserModel UserModel { get; set; }
 
-  private string errorMessage = string.Empty;
+  private string _errorMessage = string.Empty;
 
   protected override void OnInitialized()
   {
@@ -22,7 +23,7 @@ public partial class RegisterUser
     base.OnInitialized();
   }
 
-  async Task HandleSubmit()
+  internal async Task HandleSubmit()
   {
     var command = new RegisterUserRequest
     {
@@ -33,9 +34,9 @@ public partial class RegisterUser
 
     var result = await RegisterUserService.RegisterUserAsync(command);
 
-    if (!result.IsSuccessfull)
+    if (result.IsFailure)
     {
-      errorMessage = result.ErrorMessage ?? "Ha ocurrido un error en el registro.";
+      _errorMessage = result.Error.Description ?? "Ha ocurrido un error en el registro.";
       return;
     }
 

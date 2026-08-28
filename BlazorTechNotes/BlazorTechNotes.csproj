@@ -12,7 +12,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" />
+    <PackageReference Include="SonarAnalyzer.CSharp">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\UserManagement\" />
+    <Folder Include="Features\UserManagement\Components\" />
   </ItemGroup>
 
 </Project>

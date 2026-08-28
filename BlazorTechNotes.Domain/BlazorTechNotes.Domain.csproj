@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\Shared\" />
+    <Folder Include="Enums\" />
+  </ItemGroup>
+
 </Project>

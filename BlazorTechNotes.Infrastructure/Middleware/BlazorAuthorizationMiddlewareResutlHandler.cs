@@ -8,6 +8,8 @@ public class BlazorAuthorizationMiddlewareResutlHandler : IAuthorizationMiddlewa
 {
   public Task HandleAsync(RequestDelegate next, HttpContext context, AuthorizationPolicy policy, PolicyAuthorizationResult authorizeResult)
   {
-    return next(context);
+    return next is null 
+      ? Task.CompletedTask : 
+      next(context);
   }
 }

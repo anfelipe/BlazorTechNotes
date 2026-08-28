@@ -1,27 +1,27 @@
 ﻿@page "/note/detail/{NoteId:int}"
 
 <div class="container py-5">
-    @if (!string.IsNullOrEmpty(errorMessage))
+    @if (!string.IsNullOrEmpty(_errorMessage))
     {
         <h2 class="h2 text-danger">Error</h2>
-        <p class="text-danger">@errorMessage</p>
+        <p class="text-danger">@_errorMessage</p>
     }
-    else if (note is not null)
+    else if (_note is not null)
     {
         <div class="mb-4">
-            <h1 class="text-center display-4 text-primary">@note?.Title</h1>
+            <h1 class="text-center display-4 text-primary">@_note?.Title</h1>
             <p class="text-center text-muted">
-                Escrito por: @note?.UserName
+                Escrito por: @_note?.UserName
             </p>
-            <p class="small text-muted">@note?.PublishedAt</p>
+            <p class="small text-muted">@_note?.PublishedAt</p>
         </div>
         <div class="mb-4">
-            <p class="text-body">@note?.Content</p>
+            <p class="text-body">@_note?.Content</p>
         </div>
-        @if (note?.CanEdit == true)
+        @if (_note?.CanEdit == true)
         {
             <td>
-                <a href="/note/@note.Value.Id" class="btn btn-primary btn-sm">Edit</a>
+                <a href="/note/@_note.Value.Id" class="btn btn-primary btn-sm">Edit</a>
             </td>
         }
         <div class="text-center">

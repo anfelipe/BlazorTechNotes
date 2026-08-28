@@ -1,4 +1,5 @@
-using BlazorTechNotes.Application.Users.LoginUser;
+using BlazorTechNotes.Application.Features.Users.Abstractions;
+using BlazorTechNotes.Application.Features.Users.Requests;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorTechNotes.Features.Users.Components;
@@ -37,9 +38,9 @@ public partial class LoginUser
 
     var result = await LoginUserService.LoginUserAsync(command);
 
-    if (!result.IsSuccessfull)
+    if (!result.IsSuccess)
     {
-      errorMessage = result.ErrorMessage ?? "Ha ocurrido un error al iniciar sesion.";
+      errorMessage = result.Error.Description ?? "Ha ocurrido un error al iniciar sesion.";
       return;
     }
 

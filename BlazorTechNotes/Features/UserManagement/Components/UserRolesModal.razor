@@ -1,0 +1,158 @@
+@using BlazorTechNotes.Application.Features.Users.Abstractions
+
+@inject IUserRolesService UserRolesService;
+
+@if (ShowRolesModal)
+{
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true"
+       aria-labelledby="userRolesModalTitle">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header">
+          <div>
+            <h2 class="modal-title fs-5" id="userRolesModalTitle">Manage roles</h2>
+            <p class="text-body-secondary mb-0 small">@UserName</p>
+          </div>
+          <button type="button" class="btn-close" aria-label="Close" @onclick="CloseModal"></button>
+        </div>
+
+        <div class="modal-body">
+          <section class="mb-4" aria-labelledby="assignedRolesTitle">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h3 class="h6 mb-0" id="assignedRolesTitle">Assigned roles</h3>
+              <span class="badge text-bg-secondary rounded-pill">@Roles.Count</span>
+            </div>
+
+            @if (Roles.Count == 0)
+            {
+              <div class="alert alert-light border mb-0" role="status">No roles assigned.</div>
+            }
+            else
+            {
+              <div class="list-group">
+                @foreach (var role in Roles)
+                {
+                  <div class="list-group-item d-flex justify-content-between align-items-center gap-3">
+                    <span class="badge text-bg-primary rounded-pill">@role</span>
+                    <button type="button" class="btn btn-sm btn-outline-danger" @onclick="() => RemoveRole(role)">
+                      Remove
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </section>
+
+          <section aria-labelledby="addRoleTitle">
+            <h3 class="h6 mb-2" id="addRoleTitle">Add a role</h3>
+            <div class="input-group">
+              <label class="visually-hidden" for="newRoleInput">New role</label>
+              <input id="newRoleInput" type="text" class="form-control" placeholder="Enter a role name" @bind="newRole"
+                     @bind:event="oninput" />
+              <button type="button" class="btn btn-primary" @onclick="AddRole"
+                      disabled="@string.IsNullOrWhiteSpace(newRole)">
+                Add role
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @onclick="CloseModal">Close</button>
+        </div>
+      </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+      <div class="alert alert-info mt-3">@message</div>
+    }
+  </div>
+  <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+  [Parameter]
+  public bool ShowRolesModal { get; set; } = false;
+
+  [Parameter]
+  public string UserId { get; set; } = string.Empty;
+
+  [Parameter]
+  public string UserName { get; set; } = string.Empty;
+
+  [Parameter]
+  public EventCallback<bool> OnClose { get; set; }
+
+  
+  private List<string> Roles { get; set; } = new();
+  private string newRole = string.Empty;
+  private string? message;
+
+  protected override async Task OnParametersSetAsync()
+  {
+    if (ShowRolesModal && !string.IsNullOrEmpty(UserId))
+    {
+      await LoadUserRoles();
+    }
+  }
+
+  private async Task LoadUserRoles()
+  {
+    var result = await UserRolesService.GetUserRolesAsync(UserId);
+
+    if(result.IsFailure)
+    {
+      Roles = new();
+      message = result.Error.Description;
+      return;
+    }
+
+    Roles = result?.Value ?? [];
+  }
+
+  private async Task AddRole()
+  {
+    if (!string.IsNullOrEmpty(newRole) && !Roles.Contains(newRole))
+    {
+      // Call service to add role to user
+      var result = await UserRolesService.AddUserRoleAsync(UserId, newRole);
+
+      if (result.IsFailure)
+      {
+        // Handle error
+        message = result.Error.Description;
+        return;
+      }
+
+      await LoadUserRoles();
+      newRole = string.Empty;
+    }
+  }
+
+  private async Task RemoveRole(string role)
+  {
+    if (Roles.Contains(role))
+    {
+      // Call service to remove role from user
+      var result = await UserRolesService.RemoveUserRoleAsync(UserId, role);
+
+      if (result.IsFailure)
+      {
+        // Handle error
+        message = result.Error.Description;
+        return;
+      }
+
+      await LoadUserRoles();
+    }
+  }
+
+  private async Task CloseModal()
+  {
+    ShowRolesModal = false;
+    newRole = string.Empty;
+    Roles.Clear();
+    await OnClose.InvokeAsync(ShowRolesModal);
+  }
+}

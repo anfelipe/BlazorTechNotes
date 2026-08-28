@@ -1,4 +1,5 @@
-using BlazorTechNotes.Application.Notes;
+using BlazorTechNotes.Application.Features.Notes.Abstractions;
+using BlazorTechNotes.Application.Features.Notes.Responses;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorTechNotes.Features.Notes.Components;
@@ -10,20 +11,20 @@ public partial class NoteView
 
   [Parameter]
   public int NoteId { get; set; }
-  private NoteResponse? note;
-  private string errorMessage = string.Empty;
+  private NoteResponse? _note;
+  private string _errorMessage = string.Empty;
 
   protected override async Task OnParametersSetAsync()
   {
     var result = await NoteService.GetNoteByIdAsync(NoteId);
 
-    if (result is { IsSuccessfull: true, Value: not null})
+    if (result is { IsSuccess: true})
     {
-      note = (NoteResponse)result.Value;
+      _note = (NoteResponse)result.Value;
     }
     else
     {
-      errorMessage = result.ErrorMessage ?? "Lo sentimos, algo salió mal.";
+      _errorMessage = result.Error.Description ?? "Lo sentimos, algo salió mal.";
     }
   }
 }
