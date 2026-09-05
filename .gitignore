@@ -485,3 +485,8 @@ $RECYCLE.BIN/
 
 # Local app settings
 appsettings.Local.json
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
